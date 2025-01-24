@@ -7,7 +7,7 @@ library(lavaanPlot)
 library(semPlot)
 library(ggnormalviolin)
 library(ggtext)
-library(extrafont)
+library(ragg)
 
 conditional_covariance <- function(x, sigma, mu = 0) {
   if (!("matrix" %in% class(sigma))) stop("sigma must be a matrix.")
