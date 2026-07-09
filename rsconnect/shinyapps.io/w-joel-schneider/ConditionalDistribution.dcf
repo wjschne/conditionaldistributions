@@ -5,9 +5,7 @@ account: w-joel-schneider
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 7091287
-bundleId: 6328252
+bundleId: 9695270
 url: https://w-joel-schneider.shinyapps.io/ConditionalDistribution/
-when: 1663864827.44771
-lastSyncTime: 1663864827.44772
 asMultiple: FALSE
 asStatic: FALSE

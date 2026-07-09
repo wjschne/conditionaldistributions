@@ -239,6 +239,26 @@ ui <- fluidPage(
                             "# Correlations",
                             ""
                           ),
+                        #   c(
+                        #     "# Default inspired by Niileksela & Hajovksy's (2025)",
+                        #     "# preliminary model of the Woodcock-Johnson V",
+                        #     "g =~ 0.866 * Gc + 0.853 * Gf + 0.688 * Gv + 0.817 * Ga + 0.777 * Gl + 0.647 * Gr + 0.855 * Gwm + 0.517 * Gs",
+                        #     "Gc =~ 0.781 * verbal_analogies + 0.867 * oral_vocabulary + 0.685 * general_information",
+                        #   "Gf =~ 0.545 * matrices + 0.7 * analysis_synthesis + 0.713 * concept_formation",
+                        #   "Gv =~ 0.789 * block_rotation + 0.759 * spatial_relations",
+                        #   "Ga =~ 0.606 * segmentation + 0.548 * sound_blending + 0.742 * sound_deletion + 0.786 * sound_substitution",
+                        #   "Gl =~ 0.826 * story_recall + 0.713 * story_comprehension",
+                        #   "Gr =~ 0.649 * semantic_word_retrieval + 0.797 * phonemic_word_retrieval + 0.386 * rapid_letter_naming + 0.247 * rapid_number_naming",
+                        #   "Gwm =~ 0.724 * numbers_reversed + 0.794 * verbal_attention + 0.7 * animal_number_sequencing",
+                        #   "Gs =~ 0.817 * letter_pattern_matching + 0.794 * number_pattern_matching + 0.486 * symbol_inhibition",
+                        #   "BR =~ 0.976 * letter_word_identification + 0.838 * word_attack + 0.846 * oral_reading",
+                        #   "RS =~ 0.69 * sentence_reading_fluency + 0.749 * word_reading_fluency",
+                        #   "RC =~ 0.9 * passage_comprehension + 0.812 * paragraph_reading_comprehension + 0.764 * reading_recall",
+                        #   "BR ~ 0.087 * Gc + 0.644 * Ga + 0.141 * Gr",
+                        #   "RS ~ 0.196 * BR + 0.207 * Gc + 0.052 * Gl + 0.043 * Gr + 0.489 * Gs",
+                        #   "RC ~ 0.321 * Gc + 0.131 * Gf + 0.604 * BR",
+                        #   "rapid_letter_naming ~~ 0.71 * rapid_number_naming",
+                        #   "RC ~~ -0.173 * RS"),
                           collapse = "\n"
                         ),
                         height = "500px",
@@ -346,7 +366,7 @@ server <- function(input, output) {
       factor_scores = F
     ) %>%
       as.data.frame() %>%
-      mutate(across(.fns = prob_label, accuracy = .0001)) %>%
+      mutate(across(everythting(),.fns = prob_label, accuracy = .0001)) %>%
       tibble::rownames_to_column("Variable") %>% 
       DT::datatable(., filter = "none",options = list(ordering = F, dom = 't', pageLength = 100)) %>% 
       DT::formatStyle(columns = -1, `text-align` = "center")
@@ -358,6 +378,8 @@ server <- function(input, output) {
   # observed ----
   output$observed <- renderUI({
     pmap(fit()$latents, \(lhs, data) {
+      
+      mu <- rnorm(1, 100, 12)
       shiny::fluidRow(h3(paste0(lhs, " Indicators:")),
                       map(
                         data$rhs,
@@ -366,7 +388,7 @@ server <- function(input, output) {
                           label = NULL,
                           min = 40,
                           max = 160,
-                          value = 100,
+                          value = round(mu + rnorm(1, 0, 9)),
                           pre = paste0(x, " = ")
                         )
                       ))
@@ -540,31 +562,31 @@ server <- function(input, output) {
           geom_vline(
             xintercept = seq(1, 5),
             color = "gray40",
-            size = .25,
+            linewidth = .25,
             alpha = .4
           ) +
           geom_hline(
             yintercept = seq(45, 160, 15),
             color = "gray40",
-            size = .25,
+            linewidth = .25,
             alpha = .4
           ) +
           geom_hline(
             yintercept = seq(50, 160, 15),
             color = "gray40",
-            size = .25,
+            linewidth = .25,
             alpha = .4
           ) +
           geom_hline(
             yintercept = seq(40, 160, 15),
             color = "gray40",
-            size = .25,
+            linewidth = .25,
             alpha = .4
           ) +
           geom_hline(
             yintercept = 100,
             color = "gray60",
-            size = .25,
+            linewidth = .25,
             alpha = .4
           ) +
           geom_normalviolin(
@@ -583,7 +605,7 @@ server <- function(input, output) {
               group = id2,
               color = id
             ),
-            size = .1,
+            linewidth = .1,
             alpha = .4
           ) +
           scale_x_discrete(NULL, labels = mylabels) +
@@ -616,7 +638,7 @@ server <- function(input, output) {
           theme(
             legend.position = "none",
             axis.text.y = element_text(color = "gray50"),
-            axis.text.x = element_markdown(face = "italic"),
+            axis.text.x.bottom = element_markdown(face = "italic"),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             plot.background = element_rect(fill = "black"),
